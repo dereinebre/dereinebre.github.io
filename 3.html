@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Auswirkungen eines Nuklearangriffs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 900px;
+            margin: auto;
+            text-align: left;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .input-group input, .input-group select {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .input-group input[type="number"] {
+            width: 100px;
+        }
+
+        .button {
+            background-color: #f39c12;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            background-color: #f1c40f;
+        }
+
+        .results {
+            margin-top: 40px;
+            font-size: 20px;
+            color: #f39c12;
+        }
+
+        .back-button {
+            padding: 15px 25px;
+            background-color: #ff4757;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #e84118;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Simulation: Auswirkungen eines Nuklearangriffs</h1>
+
+    <div class="container">
+        <p>Stelle die Parameter der nuklearen Explosion ein und erhalte eine Analyse der Auswirkungen:</p>
+
+        <div class="input-group">
+            <label for="bombType">Waffentyp:</label>
+            <select id="bombType">
+                <option value="LittleBoy">Little Boy (Kleiner Bombentyp)</option>
+                <option value="FatMan">Fat Man (Größerer Bombentyp)</option>
+                <option value="QuantumDisruptor">Quantum Disruptor (Futuristische Waffe)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="targetArea">Zielgebiet (Bevölkerungsdichte):</label>
+            <select id="targetArea">
+                <option value="low">Niedrig (Ländlich)</option>
+                <option value="medium">Mittel (Kleine Stadt)</option>
+                <option value="high">Hoch (Großstadt)</option>
+                <option value="precise">Gezielte Zerstörung (Kleinste Fläche)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="radiationLevel">Strahlenintensität (%):</label>
+            <input type="number" id="radiationLevel" value="50" min="0" max="100">
+        </div>
+
+        <div class="input-group">
+            <label for="weatherCondition">Umweltfaktoren (Wetterbedingungen):</label>
+            <select id="weatherCondition">
+                <option value="normal">Normal</option>
+                <option value="extremeCold">Extreme Kälte</option>
+                <option value="tornado">Tornado</option>
+                <option value="radiationStorm">Strahlungssturm</option>
+            </select>
+        </div>
+
+        <button class="button" onclick="simulate()">Simulation starten</button>
+    </div>
+
+    <div id="results" class="results"></div>
+
+    <a href="index.html" class="back-button">Zurück</a>
+
+    <script>
+        function simulate() {
+            const bombType = document.getElementById('bombType').value;
+            const targetArea = document.getElementById('targetArea').value;
+            const radiationLevel = parseInt(document.getElementById('radiationLevel').value);
+            const weatherCondition = document.getElementById('weatherCondition').value;
+
+            let casualties = 0;
+            let environmentImpact = 0;
+
+            // Simulation der Auswirkungen basierend auf den Eingaben
+            if (bombType === "LittleBoy") {
+                casualties = 70000 + (Math.random() * 50000);
+            } else if (bombType === "FatMan") {
+                casualties = 100000 + (Math.random() * 80000);
+            } else {
+                casualties = 120000 + (Math.random() * 100000);
+            }
+
+            if (targetArea === "low") {
+                casualties *= 0.5;
+            } else if (targetArea === "medium") {
+                casualties *= 1;
+            } else if (targetArea === "high") {
+                casualties *= 1.5;
+            } else if (targetArea === "precise") {
+                casualties *= 2;
+            }
+
+            casualties *= (1 + radiationLevel / 100);
+
+            if (weatherCondition === "extremeCold") {
+                environmentImpact = 0.2;
+                casualties *= (1 + environmentImpact);
+            } else if (weatherCondition === "tornado") {
+                environmentImpact = 0.3;
+                casualties *= (1 + environmentImpact);
+            } else if (weatherCondition === "radiationStorm") {
+                environmentImpact = 0.5;
+                casualties *= (1 + environmentImpact);
+            }
+
+            const resultText = `
+                <p><strong>Simulationsergebnisse:</strong></p>
+                <p>Die Explosion des Typs <strong>${bombType === "LittleBoy" ? "Little Boy" : (bombType === "FatMan" ? "Fat Man" : "Quantum Disruptor")}</strong> hat folgende Auswirkungen:</p>
+                <ul>
+                    <li><strong>Geschätzte Opferzahl:</strong> ${Math.round(casualties)} Menschen</li>
+                    <li><strong>Strahlenintensität:</strong> Die Strahlung führte zu einer zusätzlichen Zunahme der Opferzahl von ${radiationLevel}%.</li>
+                    <li><strong>Umweltfaktoren:</strong> Aufgrund von <strong>${weatherCondition}</strong> stieg die Zahl der Opfer um etwa ${Math.round(environmentImpact * 100)}%.</li>
+                </ul>
+            `;
+
+            document.getElementById('results').innerHTML = resultText;
+        }
+
+        function updateButtonColors() {
+            const savedColor = localStorage.getItem('buttonColor');
+            if (savedColor) {
+                document.querySelectorAll('.button, .back-button').forEach(button => {
+                    button.style.backgroundColor = savedColor;
+                });
+            }
+        }
+
+        window.onload = updateButtonColors;
+    </script>
+
+</body>
+</html>
