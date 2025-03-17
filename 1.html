@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialogflow AI</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        iframe {
+            width: 80vw;
+            height: 70vh;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .info {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            margin-top: 10px;
+        }
+
+        button {
+            background-color: red;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: orange;
+        }
+
+        /* Mobile Optimierung */
+        @media (max-width: 768px) {
+            iframe {
+                width: 90vw;
+                height: 60vh;
+            }
+
+            button {
+                width: 80%;
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            iframe {
+                width: 95vw;
+                height: 50vh;
+            }
+
+            button {
+                width: 90%;
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <iframe 
+        src="https://console.dialogflow.com/api-client/demo/embedded/b0c6d039-7acb-49dd-80e7-60a8281bb6e3">
+    </iframe>
+
+    <div class="info">
+        <p>Hinweis: Es sind nur 30 Anfragen pro Minute erlaubt.</p>
+    </div>
+
+    <div class="buttons">
+        <button onclick="window.location.href='index.html'">Zurück</button>
+        <button onclick="window.open('https://chat.whatsapp.com/CWlu1Otp61nHibgAV4oWTF', '_blank', 'noopener,noreferrer')">Video</button>
+    </div>
+
+    <script>
+        // Beim Laden der Seite gespeicherte Knopffarbe aus localStorage abrufen
+        window.onload = function() {
+            const savedColor = localStorage.getItem('buttonColor');
+            if (savedColor) {
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(button => {
+                    button.style.backgroundColor = savedColor;
+                    button.style.background = savedColor;
+                });
+            }
+        };
+    </script>
+
+</body>
+</html>
