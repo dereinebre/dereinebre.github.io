@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive Geschichte: Die Atombombe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .story-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .story-text {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .decision-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .decision-button {
+            background-color: #f39c12;
+            color: white;
+            font-size: 18px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .decision-button:hover {
+            background-color: #f1c40f;
+            transform: translateY(-5px);
+        }
+
+        .result {
+            font-size: 22px;
+            color: #f39c12;
+            margin-top: 20px;
+        }
+
+        .button-container {
+            margin-top: 40px;
+        }
+
+        .back-button {
+            padding: 15px 25px;
+            background-color: #ff4757;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background-color: #e84118;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Interaktive Geschichte: Die Atombombe</h1>
+
+    <div class="story-container">
+        <div id="story" class="story-text">
+            <p>Du befindest dich im Jahr 1945. Der Zweite Weltkrieg geht zu Ende, und das Manhattan-Projekt steht kurz davor, die erste Atombombe zu testen. Deine Entscheidungen während dieser Zeit könnten den Ausgang des Krieges und die Zukunft der Welt beeinflussen.</p>
+        </div>
+
+        <div class="decision-buttons">
+            <button class="decision-button" onclick="startStory()">Start</button>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <a href="index.html" class="back-button">Zurück</a>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const questions = [
+            {
+                question: "Das Manhattan-Projekt ist geheim, aber du bist Teil des Teams. Was tust du?",
+                options: ["Bleibe ruhig und arbeite mit", "Informiere die Öffentlichkeit über das Projekt"],
+                outcomes: [
+                    "Du entscheidest dich, dem Projekt zu folgen und es weiter geheim zu halten.",
+                    "Du entscheidest dich, die Wahrheit zu sagen, was die Sicherheit gefährden könnte."
+                ]
+            },
+            {
+                question: "Der erste Test der Atombombe steht bevor. Soll der Test stattfinden?",
+                options: ["Ja, es muss getestet werden", "Nein, es könnte zu gefährlich sein"],
+                outcomes: [
+                    "Der Test wird durchgeführt und ist ein Erfolg.",
+                    "Der Test wird abgesagt, und es bleibt unklar, ob die Bombe funktioniert."
+                ]
+            },
+            {
+                question: "Der Einsatz der Bombe wird diskutiert. Was denkst du?",
+                options: ["Setze die Bombe ein, um den Krieg zu beenden", "Verweigere den Einsatz, es könnte zu viele Opfer fordern"],
+                outcomes: [
+                    "Die Bombe wird eingesetzt und der Krieg endet schneller, aber mit enormen Zerstörungen.",
+                    "Die Bombe wird nicht eingesetzt, und der Krieg zieht sich weiter hin."
+                ]
+            },
+            {
+                question: "Nach dem Test erhältst du Berichte über die verheerenden Auswirkungen der Bombe. Wie reagierst du?",
+                options: ["Behalte es für dich", "Gib die Informationen an die Welt weiter"],
+                outcomes: [
+                    "Du hältst die Auswirkungen geheim, um die politische Lage zu bewahren.",
+                    "Die Welt erfährt von den Zerstörungen, was zu internationalen Protesten führt."
+                ]
+            }
+        ];
+
+        let userChoices = [];
+
+        function startStory() {
+            document.querySelector(".decision-buttons").innerHTML = '';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            const storyElement = document.getElementById("story");
+            const buttonsElement = document.querySelector(".decision-buttons");
+
+            storyElement.innerHTML = `<p>${question.question}</p>`;
+            buttonsElement.innerHTML = `
+                <button class="decision-button" onclick="makeChoice(0)">${question.options[0]}</button>
+                <button class="decision-button" onclick="makeChoice(1)">${question.options[1]}</button>
+            `;
+
+            updateButtonColors();
+        }
+
+        function makeChoice(choice) {
+            const question = questions[currentQuestion];
+            const storyElement = document.getElementById("story");
+            const buttonsElement = document.querySelector(".decision-buttons");
+
+            userChoices.push(choice);
+
+            storyElement.innerHTML = `<p>${question.outcomes[choice]}</p>`;
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                setTimeout(showQuestion, 2000);
+            } else {
+                setTimeout(showResult, 2000);
+            }
+        }
+
+        function showResult() {
+            const storyElement = document.getElementById("story");
+            let score = userChoices.filter(choice => choice === 1).length;
+            let resultMessage = score >= 3
+                ? "Du hast einen entschlossenen und risikofreudigen Ansatz gewählt."
+                : "Du hast dich für Sicherheit und Bedachtsamkeit entschieden.";
+
+            storyElement.innerHTML = `<p>Ergebnisse der Geschichte: ${resultMessage}</p>`;
+
+            const buttonsElement = document.querySelector(".decision-buttons");
+            buttonsElement.innerHTML = `<button class="decision-button" onclick="window.location.reload()">Erneut spielen</button>`;
+
+            updateButtonColors();
+        }
+
+        function updateButtonColors() {
+            const savedColor = localStorage.getItem('buttonColor');
+            if (savedColor) {
+                document.querySelectorAll('.decision-button, .back-button').forEach(button => {
+                    button.style.backgroundColor = savedColor;
+                });
+            }
+        }
+
+        window.onload = updateButtonColors;
+    </script>
+
+</body>
+</html>
+
+
