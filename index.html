@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atombombe Interactive</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            align-items: center;
+        }
+
+        .button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 15px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+
+        .button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 300px;
+        }
+
+        .popup input {
+            padding: 10px;
+            margin-top: 10px;
+            width: 90%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .popup button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            background: #f39c12;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .popup button:hover {
+            background: #e67e22;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            color: red;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-box">
+        <h1>Atombombe Interactive</h1>
+
+        <div class="button-container">
+            <button class="button" onclick="openPinPopup('1.html', '1111')">KI Chat</button>
+            <button class="button" onclick="openPinPopup('2.html', '2222')">Geschichte</button>
+            <button class="button" onclick="openPinPopup('3.html', '3333')">Simulation</button>
+            <button class="button" onclick="openPinPopup('4.html', '4444')">Zeitstrahl</button>
+        </div>
+
+        <div>
+            <button onclick="changeButtonColor()">Farbe ändern</button>
+        </div>
+    </div>
+
+    <!-- PIN Popup -->
+    <div id="pinPopup" class="popup">
+        <span class="close" onclick="closePinPopup()">&times;</span>
+        <h2>Bitte geben Sie die PIN ein</h2>
+        <input type="password" id="pin" placeholder="PIN eingeben">
+        <button onclick="checkPin()">Bestätigen</button>
+    </div>
+
+    <script>
+        // Store target page and pin in variables
+        var targetPage = '';
+        var correctPin = '';
+
+        // Function to open PIN popup and pass the target page and pin
+        function openPinPopup(page, pin) {
+            targetPage = page;
+            correctPin = pin;
+            document.getElementById("pinPopup").style.display = "block"; // Show the PIN popup
+        }
+
+        // Close the PIN popup
+        function closePinPopup() {
+            document.getElementById("pinPopup").style.display = "none";
+            document.getElementById("pin").value = ''; // Clear the PIN input
+        }
+
+        // Function to check the PIN and redirect if correct
+        function checkPin() {
+            const pin = document.getElementById("pin").value;
+
+            if (pin === correctPin) {
+                // Redirect to the target page if the PIN is correct
+                window.location.href = targetPage;
+            } else {
+                alert("Falsche PIN! Bitte versuchen Sie es erneut.");
+            }
+
+            // Close the PIN popup
+            closePinPopup();
+        }
+
+        // Function to change the button colors and store the setting in localStorage
+        function changeButtonColor() {
+            let newColor = prompt("Geben Sie eine neue Farbe für die Schaltflächen ein (z.B. 'blue' oder '#f39c12'):");
+            if (newColor) {
+                // Apply the new color to all buttons
+                const buttons = document.querySelectorAll('.button');
+                buttons.forEach(button => {
+                    button.style.backgroundColor = newColor;
+                    button.style.background = newColor;
+                });
+
+                // Save the chosen color in localStorage
+                localStorage.setItem('buttonColor', newColor);
+            }
+        }
+
+        // On page load, check if there's a saved color in localStorage and apply it
+        window.onload = function() {
+            const savedColor = localStorage.getItem('buttonColor');
+            if (savedColor) {
+                const buttons = document.querySelectorAll('.button');
+                buttons.forEach(button => {
+                    button.style.backgroundColor = savedColor;
+                    button.style.background = savedColor;
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>
