@@ -147,12 +147,10 @@
             const buttonsElement = document.querySelector(".decision-buttons");
 
             storyElement.innerHTML = `<p>${question.question}</p>`;
-            buttonsElement.innerHTML = `
+            buttonsElement.innerHTML = ` 
                 <button class="decision-button" onclick="makeChoice(0)">${question.options[0]}</button>
                 <button class="decision-button" onclick="makeChoice(1)">${question.options[1]}</button>
             `;
-
-            updateButtonColors();
         }
 
         function makeChoice(choice) {
@@ -165,38 +163,38 @@
             storyElement.innerHTML = `<p>${question.outcomes[choice]}</p>`;
             currentQuestion++;
 
-            if (currentQuestion < questions.length) {
-                setTimeout(showQuestion, 2000);
-            } else {
-                setTimeout(showResult, 2000);
-            }
+            // Verlängern der Anzeigezeit der Entscheidung
+            setTimeout(() => {
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 3000); // 3 Sekunden Verzögerung
         }
 
         function showResult() {
             const storyElement = document.getElementById("story");
+
+            // Hier die Auswertung je nach getroffenen Entscheidungen
             let score = userChoices.filter(choice => choice === 1).length;
-            let resultMessage = score >= 3
-                ? "Du hast einen entschlossenen und risikofreudigen Ansatz gewählt."
-                : "Du hast dich für Sicherheit und Bedachtsamkeit entschieden.";
+
+            let resultMessage = '';
+            if (score === 0) {
+                resultMessage = "Du hast dich für Sicherheit entschieden, was die Kriegsdauer verlängert hat, aber viele Leben gerettet.";
+            } else if (score === 1) {
+                resultMessage = "Du hast eine ausgewogene Entscheidung getroffen, die den Krieg schneller beenden konnte, aber große Opfer forderte.";
+            } else if (score === 2) {
+                resultMessage = "Du hast entschlossene und riskante Entscheidungen getroffen, die den Krieg schnell beendeten, aber zu enormen Zerstörungen führten.";
+            } else {
+                resultMessage = "Du hast dich sehr für das Wohl der Welt eingesetzt, jedoch zu spät gehandelt. Der Krieg zog sich weiter hin.";
+            }
 
             storyElement.innerHTML = `<p>Ergebnisse der Geschichte: ${resultMessage}</p>`;
 
             const buttonsElement = document.querySelector(".decision-buttons");
             buttonsElement.innerHTML = `<button class="decision-button" onclick="window.location.reload()">Erneut spielen</button>`;
-
-            updateButtonColors();
         }
-
-        function updateButtonColors() {
-            const savedColor = localStorage.getItem('buttonColor');
-            if (savedColor) {
-                document.querySelectorAll('.decision-button, .back-button').forEach(button => {
-                    button.style.backgroundColor = savedColor;
-                });
-            }
-        }
-
-        window.onload = updateButtonColors;
     </script>
 
 </body>
