@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Das Manhattan-Projekt - Interaktiver Zeitstrahl</title>
+    <title>Die Atombomben auf Japan - Interaktiver Zeitstrahl</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,6 +32,7 @@
             background-color: #34495e;
             border-radius: 10px;
             height: 20px;
+            position: relative;
         }
 
         .slider input {
@@ -42,7 +43,19 @@
             background-color: #f39c12;
             border-radius: 10px;
             outline: none;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out; /* Smooth transition */
+        }
+
+        .slider input::-webkit-slider-runnable-track {
+            height: 20px;
+            border-radius: 10px;
+            background-color: #34495e;
+        }
+
+        .slider input::-moz-range-track {
+            height: 20px;
+            border-radius: 10px;
+            background-color: #34495e;
         }
 
         .event-description {
@@ -70,19 +83,19 @@
 </head>
 <body>
 
-    <h1>Das Manhattan-Projekt - Interaktiver Zeitstrahl</h1>
+    <h1>Die Atombomben auf Japan - Interaktiver Zeitstrahl</h1>
     
     <div class="slider-container">
-        <p class="slider-label">Bewege den Schieberegler, um die Ereignisse des Manhattan-Projekts zu sehen:</p>
+        <p class="slider-label">Bewege den Schieberegler, um die Ereignisse der Atombombenabwürfe und der japanischen Kapitulation zu sehen:</p>
         
         <input type="range" min="0" max="4" value="0" class="slider" id="event-slider">
 
         <div id="event-description" class="event-description">
-            <p id="event-title" class="event-title">Start des Manhattan-Projekts</p>
+            <p id="event-title" class="event-title">Vorbereitung der Atombombenabwürfe</p>
             <p id="event-detail" class="event-detail">
-                Am 28. September 1942 gab das US-Militär offiziell den Start des Manhattan-Projekts bekannt. Das Ziel war die Entwicklung der ersten Atombombe.
+                Im Sommer 1945 bereiteten die Vereinigten Staaten die Atombombenabwürfe auf Japan vor. Der Einsatz der Bomben sollte den Krieg schnell beenden und Japan zur Kapitulation zwingen.
             </p>
-            <p id="event-date" class="event-date">September 1942</p>
+            <p id="event-date" class="event-date">Sommer 1945</p>
         </div>
     </div>
 
@@ -95,29 +108,29 @@
             let slider = document.getElementById("event-slider");
 
             if (value == 0) {
-                title = "Start des Manhattan-Projekts";
-                detail = "Am 28. September 1942 gab das US-Militär offiziell den Start des Manhattan-Projekts bekannt. Das Ziel war die Entwicklung der ersten Atombombe.";
-                date = "September 1942";
+                title = "Vorbereitung der Atombombenabwürfe";
+                detail = "Im Sommer 1945 bereiteten die Vereinigten Staaten die Atombombenabwürfe auf Japan vor. Der Einsatz der Bomben sollte den Krieg schnell beenden und Japan zur Kapitulation zwingen.";
+                date = "Sommer 1945";
                 slider.style.backgroundColor = "#f39c12";
             } else if (value == 1) {
-                title = "Juli 1942 - Erste Tests";
-                detail = "1942 begannen die ersten Tests und Versuche zur Entwicklung von Uran als Brennstoff für die Bombe. Es war der Beginn eines langen und geheimen Entwicklungsprozesses.";
-                date = "1942";
+                title = "6. August 1945 - Hiroshima";
+                detail = "Am 6. August 1945 wurde die erste Atombombe, 'Little Boy', auf Hiroshima abgeworfen. Der Angriff zerstörte die Stadt und tötete Zehntausende von Menschen.";
+                date = "6. August 1945";
                 slider.style.backgroundColor = "#e67e22";
             } else if (value == 2) {
-                title = "16. Juli 1945 - Trinity-Test";
-                detail = "Der Trinity-Test war der erste erfolgreiche Test einer Atombombe, der in der Wüste von New Mexico durchgeführt wurde. Der Test war ein entscheidender Moment im Manhattan-Projekt.";
-                date = "16. Juli 1945";
+                title = "9. August 1945 - Nagasaki";
+                detail = "Am 9. August 1945 wurde die zweite Atombombe, 'Fat Man', auf Nagasaki abgeworfen. Auch dieser Angriff verursachte immense Zerstörung und Leid.";
+                date = "9. August 1945";
                 slider.style.backgroundColor = "#c0392b";
             } else if (value == 3) {
-                title = "6. August 1945 - Hiroshima";
-                detail = "Am 6. August 1945 wurde die erste Atombombe, 'Little Boy', auf die japanische Stadt Hiroshima abgeworfen, was zur Kapitulation Japans und zum Ende des Zweiten Weltkriegs beitrug.";
-                date = "6. August 1945";
+                title = "15. August 1945 - Japans Kapitulation";
+                detail = "Am 15. August 1945 gab Japan seine Kapitulation bekannt, nachdem die Atombombenabwürfe und die sowjetische Kriegserklärung den Druck auf das Land erhöht hatten.";
+                date = "15. August 1945";
                 slider.style.backgroundColor = "#9b59b6";
             } else if (value == 4) {
-                title = "9. August 1945 - Nagasaki";
-                detail = "Am 9. August 1945 wurde die zweite Atombombe, 'Fat Man', auf Nagasaki abgeworfen. Dies führte zur endgültigen Kapitulation Japans und beendete den Zweiten Weltkrieg.";
-                date = "9. August 1945";
+                title = "Ende des Zweiten Weltkriegs";
+                detail = "Mit der Kapitulation Japans endete der Zweite Weltkrieg. Der Einsatz der Atombomben führte zu weltweiten politischen und moralischen Diskussionen.";
+                date = "15. August 1945";
                 slider.style.backgroundColor = "#2980b9";
             }
 
@@ -126,6 +139,6 @@
             document.getElementById("event-date").innerText = date;
         });
     </script>
-<a href="index.html" class="back-button">Zurück</a>
+
 </body>
 </html>
