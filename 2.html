@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktive Geschichte: Die Atombombe</title>
+    <title>Das Manhattan-Projekt: Entscheidungsspiel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,7 +38,7 @@
             flex-wrap: wrap;
         }
 
-        .decision-button {
+        .choice {
             background-color: #f39c12;
             color: white;
             font-size: 18px;
@@ -47,9 +47,10 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: none;
         }
 
-        .decision-button:hover {
+        .choice:hover {
             background-color: #f1c40f;
             transform: translateY(-5px);
         }
@@ -60,11 +61,9 @@
             margin-top: 20px;
         }
 
-        .button-container {
-            margin-top: 40px;
-        }
-
         .back-button {
+            margin-top: 20px;
+            display: inline-block;
             padding: 15px 25px;
             background-color: #ff4757;
             color: white;
@@ -80,124 +79,71 @@
     </style>
 </head>
 <body>
-
-    <h1>Interaktive Geschichte: Die Atombombe</h1>
-
+    <h1>Das Manhattan-Projekt</h1>
     <div class="story-container">
-        <div id="story" class="story-text">
-            <p>Du befindest dich im Jahr 1945. Der Zweite Weltkrieg geht zu Ende, und das Manhattan-Projekt steht kurz davor, die erste Atombombe zu testen. Deine Entscheidungen während dieser Zeit könnten den Ausgang des Krieges und die Zukunft der Welt beeinflussen.</p>
-        </div>
-
+        <p id="story" class="story-text">Du bist Wissenschaftler im Manhattan-Projekt. Deine Entscheidungen beeinflussen den Verlauf der Geschichte. Wähle weise.</p>
         <div class="decision-buttons">
-            <button class="decision-button" onclick="startStory()">Start</button>
+            <button class="choice" onclick="choose(1, 'weiter')">Weiter am Projekt arbeiten</button>
+            <button class="choice" onclick="choose(1, 'verlassen')">Das Projekt verlassen</button>
         </div>
     </div>
-
-    <div class="button-container">
-        <a href="index.html" class="back-button">Zurück</a>
-    </div>
-
+    
     <script>
-        let currentQuestion = 0;
-        const questions = [
-            {
-                question: "Das Manhattan-Projekt ist geheim, aber du bist Teil des Teams. Was tust du?",
-                options: ["Bleibe ruhig und arbeite mit", "Informiere die Öffentlichkeit über das Projekt"],
-                outcomes: [
-                    "Du entscheidest dich, dem Projekt zu folgen und es weiter geheim zu halten.",
-                    "Du entscheidest dich, die Wahrheit zu sagen, was die Sicherheit gefährden könnte."
-                ]
-            },
-            {
-                question: "Der erste Test der Atombombe steht bevor. Soll der Test stattfinden?",
-                options: ["Ja, es muss getestet werden", "Nein, es könnte zu gefährlich sein"],
-                outcomes: [
-                    "Der Test wird durchgeführt und ist ein Erfolg.",
-                    "Der Test wird abgesagt, und es bleibt unklar, ob die Bombe funktioniert."
-                ]
-            },
-            {
-                question: "Der Einsatz der Bombe wird diskutiert. Was denkst du?",
-                options: ["Setze die Bombe ein, um den Krieg zu beenden", "Verweigere den Einsatz, es könnte zu viele Opfer fordern"],
-                outcomes: [
-                    "Die Bombe wird eingesetzt und der Krieg endet schneller, aber mit enormen Zerstörungen.",
-                    "Die Bombe wird nicht eingesetzt, und der Krieg zieht sich weiter hin."
-                ]
-            },
-            {
-                question: "Nach dem Test erhältst du Berichte über die verheerenden Auswirkungen der Bombe. Wie reagierst du?",
-                options: ["Behalte es für dich", "Gib die Informationen an die Welt weiter"],
-                outcomes: [
-                    "Du hältst die Auswirkungen geheim, um die politische Lage zu bewahren.",
-                    "Die Welt erfährt von den Zerstörungen, was zu internationalen Protesten führt."
-                ]
-            }
-        ];
-
-        let userChoices = [];
-
-        function startStory() {
-            document.querySelector(".decision-buttons").innerHTML = '';
-            showQuestion();
-        }
-
-        function showQuestion() {
-            const question = questions[currentQuestion];
-            const storyElement = document.getElementById("story");
-            const buttonsElement = document.querySelector(".decision-buttons");
-
-            storyElement.innerHTML = `<p>${question.question}</p>`;
-            buttonsElement.innerHTML = ` 
-                <button class="decision-button" onclick="makeChoice(0)">${question.options[0]}</button>
-                <button class="decision-button" onclick="makeChoice(1)">${question.options[1]}</button>
-            `;
-        }
-
-        function makeChoice(choice) {
-            const question = questions[currentQuestion];
-            const storyElement = document.getElementById("story");
-            const buttonsElement = document.querySelector(".decision-buttons");
-
-            userChoices.push(choice);
-
-            storyElement.innerHTML = `<p>${question.outcomes[choice]}</p>`;
-            currentQuestion++;
-
-            // Verlängern der Anzeigezeit der Entscheidung
-            setTimeout(() => {
-                if (currentQuestion < questions.length) {
-                    showQuestion();
+        let decisions = [];
+        function choose(stage, option) {
+            decisions.push(option);
+            let story = document.getElementById("story");
+            let buttons = document.querySelectorAll(".choice");
+            
+            if (stage === 1) {
+                if (option === 'weiter') {
+                    story.innerHTML = "Das Projekt schreitet voran. Nun musst du entscheiden, ob du Bedenken gegenüber der Regierung äußerst oder schweigst.";
+                    buttons[0].innerText = "Bedenken äußern";
+                    buttons[0].setAttribute("onclick", "choose(2, 'äußern')");
+                    buttons[1].innerText = "Schweigen";
+                    buttons[1].setAttribute("onclick", "choose(2, 'schweigen')");
                 } else {
-                    showResult();
+                    story.innerHTML = "Du hast das Projekt verlassen. Doch wirst du öffentlich gegen die Bombe argumentieren oder im Verborgenen bleiben?";
+                    buttons[0].innerText = "Öffentlich argumentieren";
+                    buttons[0].setAttribute("onclick", "choose(2, 'öffentlich')");
+                    buttons[1].innerText = "Im Verborgenen bleiben";
+                    buttons[1].setAttribute("onclick", "choose(2, 'verborgen')");
                 }
-            }, 3000); // 3 Sekunden Verzögerung
-        }
-
-        function showResult() {
-            const storyElement = document.getElementById("story");
-
-            // Hier die Auswertung je nach getroffenen Entscheidungen
-            let score = userChoices.filter(choice => choice === 1).length;
-
-            let resultMessage = '';
-            if (score === 0) {
-                resultMessage = "Du hast dich für Sicherheit entschieden, was die Kriegsdauer verlängert hat, aber viele Leben gerettet.";
-            } else if (score === 1) {
-                resultMessage = "Du hast eine ausgewogene Entscheidung getroffen, die den Krieg schneller beenden konnte, aber große Opfer forderte.";
-            } else if (score === 2) {
-                resultMessage = "Du hast entschlossene und riskante Entscheidungen getroffen, die den Krieg schnell beendeten, aber zu enormen Zerstörungen führten.";
-            } else {
-                resultMessage = "Du hast dich sehr für das Wohl der Welt eingesetzt, jedoch zu spät gehandelt. Der Krieg zog sich weiter hin.";
+            } else if (stage === 2) {
+                if (option === 'äußern') {
+                    story.innerHTML = "Deine Warnungen werden ignoriert. Du kannst versuchen, geheime Informationen weiterzugeben oder dich weiterhin der Forschung widmen.";
+                    buttons[0].innerText = "Geheime Infos weitergeben";
+                    buttons[0].setAttribute("onclick", "choose(3, 'weitergeben')");
+                    buttons[1].innerText = "Weiter forschen";
+                    buttons[1].setAttribute("onclick", "choose(3, 'forschen')");
+                } else if (option === 'schweigen') {
+                    story.innerHTML = "Das Projekt geht weiter. Jetzt kannst du entscheiden, ob du das Ziel der Bombe beeinflussen möchtest oder nicht.";
+                    buttons[0].innerText = "Das Ziel beeinflussen";
+                    buttons[0].setAttribute("onclick", "choose(3, 'ziel ändern')");
+                    buttons[1].innerText = "Nichts tun";
+                    buttons[1].setAttribute("onclick", "choose(3, 'nichts tun')");
+                } else if (option === 'öffentlich') {
+                    story.innerHTML = "Deine Proteste werden beachtet, aber du gerätst unter Druck. Wirst du weitermachen oder nachgeben?";
+                    buttons[0].innerText = "Weitermachen";
+                    buttons[0].setAttribute("onclick", "choose(3, 'weitermachen')");
+                    buttons[1].innerText = "Nachgeben";
+                    buttons[1].setAttribute("onclick", "choose(3, 'nachgeben')");
+                } else {
+                    story.innerHTML = "Du hältst dich bedeckt und die Geschichte nimmt ihren Lauf. Wird sich dein Schweigen irgendwann rächen?";
+                    buttons[0].innerText = "Später sprechen";
+                    buttons[0].setAttribute("onclick", "choose(3, 'später sprechen')");
+                    buttons[1].innerText = "Für immer schweigen";
+                    buttons[1].setAttribute("onclick", "choose(3, 'für immer schweigen')");
+                }
+            } else if (stage === 3) {
+                story.innerHTML = "Deine Entscheidungen haben die Welt verändert. Hier ist deine Auswertung:";
+                let summary = "<br><br>Dein Weg: " + decisions.join(" → ");
+                let finalMessage = "<br><br>Fazit: " + (decisions.includes("weitergeben") || decisions.includes("öffentlich") ? "Du hast versucht, die Welt zu warnen, doch wurde dir Gehör geschenkt?" : "Du hast dem Lauf der Geschichte nicht widersprochen und die Konsequenzen akzeptiert.");
+                story.innerHTML += summary + finalMessage;
+                buttons.forEach(button => button.style.display = "none");
             }
-
-            storyElement.innerHTML = `<p>Ergebnisse der Geschichte: ${resultMessage}</p>`;
-
-            const buttonsElement = document.querySelector(".decision-buttons");
-            buttonsElement.innerHTML = `<button class="decision-button" onclick="window.location.reload()">Erneut spielen</button>`;
         }
     </script>
-
+    <a href="index.html" class="back-button">Zurück</a>
 </body>
 </html>
-
-
