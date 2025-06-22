@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krafttraining Tracker mit Notizen</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #2c3e50;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --light: #f8f9fa;
+      --dark: #343a40;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 30px;
+      background: var(--secondary);
+      color: white;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+    }
+    
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .card-title {
+      color: var(--secondary);
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card-title i {
+      color: var(--primary);
+    }
+    
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    input, textarea, select, button {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: 2px solid #e1e5eb;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+    
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    button:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+    
+    button.delete-btn {
+      background: var(--danger);
+      padding: 8px 15px;
+      font-size: 14px;
+      width: auto;
+    }
+    
+    button.delete-btn:hover {
+      background: #c0392b;
+    }
+    
+    button.export-btn {
+      background: var(--success);
+      width: auto;
+      margin-top: 15px;
+    }
+    
+    button.export-btn:hover {
+      background: #27ae60;
+    }
+    
+    .tag-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    
+    .tag {
+      padding: 8px 15px;
+      border-radius: 20px;
+      background: #e1e5eb;
+      cursor: pointer;
+      transition: all 0.3s;
+      user-select: none;
+    }
+    
+    .tag:hover {
+      background: #d1d5db;
+    }
+    
+    .tag.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .tag.warning {
+      background: #fef9e7;
+      color: var(--warning);
+    }
+    
+    .tag.danger {
+      background: #fdedec;
+      color: var(--danger);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e1e5eb;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+    
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .note-cell {
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .tag-cell {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    
+    .small-tag {
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+    
+    .stat-box {
+      background: var(--primary);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .stat-box.warning {
+      background: var(--warning);
+    }
+    
+    .stat-box.success {
+      background: var(--success);
+    }
+    
+    .stat-box.secondary {
+      background: var(--secondary);
+    }
+    
+    .stat-box h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: bold;
+    }
+    
+    .chart-controls {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    
+    .chart-type-selector {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .chart-type-btn {
+      background: #edf2f7;
+      color: var(--dark);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .chart-type-btn:hover {
+      background: #e2e8f0;
+    }
+    
+    .chart-type-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .notification {
+      padding: 18px;
+      background: var(--success);
+      color: white;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.5s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .search-container i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+    }
+    
+    .search-container input {
+      padding-left: 45px;
+    }
+    
+    .note-preview {
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary);
+      padding: 20px;
+      border-radius: 0 10px 10px 0;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .note-preview h4 {
+      margin-bottom: 10px;
+      color: var(--secondary);
+    }
+    
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .control-group {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 25px;
+      color: #718096;
+      font-size: 0.95rem;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .controls-row {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .chart-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #718096;
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #cbd5e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-dumbbell"></i> Krafttraining Tracker</h1>
+      <p class="subtitle">Verfolge deine Übungen, Wiederholungen und Notizen für optimale Trainingsfortschritte</p>
+    </header>
+
+    <div class="notification" id="notification">Eintrag erfolgreich gespeichert!</div>
+
+    <div class="grid-container">
+      <div class="card">
+        <h2 class="card-title"><i class="fas fa-plus-circle"></i> Neuer Trainingseintrag</h2>
+        <form id="entryForm">
+          <div class="control-group">
+            <label for="exercise">Übung:</label>
+            <input type="text" id="exercise" required placeholder="z.B. Klimmzüge, Liegestütze...">
+          </div>
+          
+          <div class="control-group">
+            <label for="reps">Wiederholungen:</label>
+            <input type="number" id="reps" required min="1" placeholder="Anzahl der Wiederholungen">
+          </div>
+          
+          <div class="control-group">
+            <label for="note">Notiz:</label>
+            <textarea id="note" placeholder="Notizen zur Übung (z.B. Technik, Gefühl, Schwierigkeit...)"></textarea>
+          </div>
+          
+          <div>
+            <label>Tags:</label>
+            <div class="tag-selector">
+              <div class="tag" data-tag="Standard">Standard</div>
+              <div class="tag warning" data-tag="Schwer">Schwer</div>
+              <div class="tag danger" data-tag="Schmerzen">Schmerzen</div>
+              <div class="tag" data-tag="Leicht">Leicht</div>
+              <div class="tag" data-tag="PB">Persönliche Bestleistung</div>
+            </div>
+            <input type="hidden" id="tags" value="Standard">
+          </div>
+          
+          <button type="submit"><i class="fas fa-save"></i> Eintrag speichern</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Trainingsstatistik</h2>
+        <div id="statsPlaceholder">
+          <p>Füge Trainingseinträge hinzu, um Statistiken zu sehen.</p>
+        </div>
+        <div id="exerciseStats" style="display:none;">
+          <div class="stats-container">
+            <div class="stat-box">
+              <h3>Gesamt Wiederholungen</h3>
+              <div class="stat-value" id="totalReps">0</div>
+            </div>
+            <div class="stat-box success">
+              <h3>Eingetragene Übungen</h3>
+              <div class="stat-value" id="totalExercises">0</div>
+            </div>
+            <div class="stat-box warning">
+              <h3>Durchschnittl. Wiederholungen</h3>
+              <div class="stat-value" id="avgReps">0</div>
+            </div>
+            <div class="stat-box secondary">
+              <h3>Trainingssitzungen</h3>
+              <div class="stat-value" id="totalSessions">0</div>
+            </div>
+          </div>
+          
+          <div id="mostCommonExercise">
+            <h3>Häufigste Übung:</h3>
+            <p><span id="commonExerciseName">-</span> (<span id="commonExerciseCount">0</span> Mal durchgeführt)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><i class="fas fa-history"></i> Trainingsverlauf</h2>
+      
+      <div class="controls-row">
+        <div class="control-group">
+          <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Übungen oder Notizen durchsuchen...">
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label for="exerciseFilter">Filtern nach Übung:</label>
+          <select id="exerciseFilter">
+            <option value="alle">Alle Übungen anzeigen</option>
+          </select>
+        </div>
+        
+        <div class="control-group">
+          <label for="sortBy">Sortieren nach:</label>
+          <select id="sortBy">
+            <option value="dateDesc">Neueste zuerst</option>
+            <option value="dateAsc">Älteste zuerst</option>
+            <option value="repsDesc">Wiederholungen (absteigend)</option>
+            <option value="repsAsc">Wiederholungen (aufsteigend)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="overflow-x:auto;">
+        <table id="historyTable">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Übung</th>
+              <th>Wdh.</th>
+              <th>Tags</th>
+              <th>Notiz</th>
+              <th>Aktion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Daten werden dynamisch eingefügt -->
+          </tbody>
+        </table>
+        <div id="emptyTableState" class="empty-state">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>Noch keine Einträge vorhanden</h3>
+          <p>Füge deine erste Übung hinzu, um zu beginnen</p>
+        </div>
+      </div>
+      
+      <button class="export-btn" id="exportBtn"><i class="fas fa-file-export"></i> Daten exportieren</button>
+    </div>
+
+    <div class="card">
+      <div class="chart-controls">
+        <h2 class="card-title" style="margin:0;"><i class="fas fa-chart-line"></i> Fortschrittsdiagramm</h2>
+        <div class="chart-type-selector">
+          <button class="chart-type-btn active" data-type="reps">
+            <i class="fas fa-chart-bar"></i> Wiederholungen
+          </button>
+          <button class="chart-type-btn" data-type="frequency">
+            <i class="fas fa-calendar-alt"></i> Häufigkeit
+          </button>
+        </div>
+      </div>
+      
+      <div id="chartContainer">
+        <canvas id="progressChart"></canvas>
+      </div>
+      <div id="noDataMessage" class="empty-state" style="display: none;">
+        <i class="fas fa-chart-pie"></i>
+        <h3>Keine Daten für Diagramm verfügbar</h3>
+        <p>Füge mehr Einträge hinzu oder wähle eine andere Übung</p>
+      </div>
+    </div>
+    
+    <div class="note-preview" id="notePreview">
+      <h4>Notizdetails:</h4>
+      <p id="fullNoteText"></p>
+    </div>
+
+    <footer>
+      <p>Deine Daten werden lokal in deinem Browser gespeichert | © 2023 Krafttraining Tracker</p>
+      <p><i class="fas fa-exclamation-triangle"></i> Hinweis: Bei Browser-Cache-Löschung gehen Daten verloren - regelmäßig exportieren!</p>
+    </footer>
+  </div>
+
+  <script>
+    // DOM-Elemente
+    const form = document.getElementById('entryForm');
+    const tableBody = document.querySelector('#historyTable tbody');
+    const filterSelect = document.getElementById('exerciseFilter');
+    const sortSelect = document.getElementById('sortBy');
+    const searchInput = document.getElementById('searchInput');
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    const notification = document.getElementById('notification');
+    const exportBtn = document.getElementById('exportBtn');
+    const emptyTableState = document.getElementById('emptyTableState');
+    const noDataMessage = document.getElementById('noDataMessage');
+    const notePreview = document.getElementById('notePreview');
+    const fullNoteText = document.getElementById('fullNoteText');
+    
+    // Konfiguration
+    const MAX_ENTRIES = 100;
+    const chartTypeBtns = document.querySelectorAll('.chart-type-btn');
+    const tags = document.querySelectorAll('.tag');
+    
+    // Daten
+    let entries = JSON.parse(localStorage.getItem('trainingEntries')) || [];
+    let chart;
+    let currentChartType = 'reps';
+    let currentExercise = 'alle';
+    
+    // Initialisierung
+    document.addEventListener('DOMContentLoaded', () => {
+      updateExerciseFilterOptions();
+      renderTable();
+      updateStats();
+      setupEventListeners();
+      updateChart();
+    });
+    
+    // Event Listener einrichten
+    function setupEventListeners() {
+      form.addEventListener('submit', saveEntry);
+      filterSelect.addEventListener('change', handleFilterChange);
+      sortSelect.addEventListener('change', handleSortChange);
+      searchInput.addEventListener('input', handleSearch);
+      exportBtn.addEventListener('click', exportData);
+      
+      // Tag-Auswahl
+      tags.forEach(tag => {
+        tag.addEventListener('click', () => {
+          // Aktiven Tag umschalten
+          if (tag.classList.contains('active')) {
+            tag.classList.remove('active');
+            document.getElementById('tags').value = 'Standard';
+          } else {
+            tags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            document.getElementById('tags').value = tag.dataset.tag;
+          }
+        });
+      });
+      
+      // Chart-Typ Buttons
+      chartTypeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          chartTypeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentChartType = btn.dataset.type;
+          updateChart();
+        });
+      });
+    }
+    
+    // Eintrag speichern
+    function saveEntry(e) {
+      e.preventDefault();
+      const exercise = document.getElementById('exercise').value.trim();
+      const reps = parseInt(document.getElementById('reps').value);
+      const note = document.getElementById('note').value.trim();
+      const tags = document.getElementById('tags').value;
+      
+      if (!exercise || isNaN(reps)) {
+        showNotification('Bitte fülle alle Pflichtfelder aus!', 'warning');
+        return;
+      }
+      
+      const newEntry = {
+        id: Date.now().toString(),
+        date: new Date().toLocaleDateString('de-DE', { 
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        exercise,
+        reps,
+        note,
+        tags: tags.split(',').map(tag => tag.trim())
+      };
+      
+      // Alte Einträge entfernen, wenn Maximalanzahl erreicht
+      if (entries.length >= MAX_ENTRIES) {
+        entries.shift();
+      }
+      
+      entries.push(newEntry);
+      localStorage.setItem('trainingEntries', JSON.stringify(entries));
+      form.reset();
+      document.querySelector('.tag').click(); // Standard-Tag zurücksetzen
+      
+      showNotification('Eintrag erfolgreich gespeichert!', 'success');
+      
+      updateExerciseFilterOptions();
+      renderTable();
+      updateStats();
+      updateChart();
+    }
+    
+    // Tabelle rendern
+    function renderTable() {
+      const filter = filterSelect.value;
+      const sort = sortSelect.value;
+      const searchTerm = searchInput.value.toLowerCase();
+      
+      let filtered = filter === "alle" ? [...entries] : 
+                    entries.filter(e => e.exercise === filter);
+      
+      // Suche anwenden
+      if (searchTerm) {
+        filtered = filtered.filter(entry => 
+          entry.exercise.toLowerCase().includes(searchTerm) || 
+          (entry.note && entry.note.toLowerCase().includes(searchTerm))
+        );
+      }
+      
+      // Sortierung
+      switch(sort) {
+        case 'dateAsc':
+          filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+          break;
+        case 'dateDesc':
+          filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+          break;
+        case 'repsAsc':
+          filtered.sort((a, b) => a.reps - b.reps);
+          break;
+        case 'repsDesc':
+          filtered.sort((a, b) => b.reps - a.reps);
+          break;
+      }
+      
+      tableBody.innerHTML = '';
+      
+      if (filtered.length === 0) {
+        emptyTableState.style.display = 'block';
+        return;
+      }
+      
+      emptyTableState.style.display = 'none';
+      
+      filtered.forEach(entry => {
+        const row = document.createElement('tr');
+        
+        // Tags als Badges darstellen
+        const tagsHtml = entry.tags.map(tag => {
+          let cls = '';
+          if (tag === 'Schwer') cls = 'warning';
+          if (tag === 'Schmerzen') cls = 'danger';
+          return `<span class="small-tag tag ${cls}">${tag}</span>`;
+        }).join('');
+        
+        row.innerHTML = `
+          <td>${entry.date}</td>
+          <td>${entry.exercise}</td>
+          <td>${entry.reps}</td>
+          <td class="tag-cell">${tagsHtml}</td>
+          <td class="note-cell" data-full-note="${entry.note || ''}">
+            ${entry.note ? (entry.note.substring(0, 50) + (entry.note.length > 50 ? '...' : '')) : '-'}
+          </td>
+          <td><button class="delete-btn" data-id="${entry.id}"><i class="fas fa-trash-alt"></i></button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+      
+      // Event Listener für Lösch-Buttons
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          deleteEntry(id);
+        });
+      });
+      
+      // Event Listener für Notizen
+      document.querySelectorAll('.note-cell').forEach(cell => {
+        cell.addEventListener('click', function() {
+          const note = this.getAttribute('data-full-note');
+          if (note) {
+            fullNoteText.textContent = note;
+            notePreview.style.display = 'block';
+          }
+        });
+      });
+    }
+    
+    // Eintrag löschen
+    function deleteEntry(id) {
+      if (confirm('Möchtest du diesen Eintrag wirklich löschen?')) {
+        entries = entries.filter(entry => entry.id !== id);
+        localStorage.setItem('trainingEntries', JSON.stringify(entries));
+        showNotification('Eintrag erfolgreich gelöscht!', 'success');
+        
+        updateExerciseFilterOptions();
+        renderTable();
+        updateStats();
+        updateChart();
+      }
+    }
+    
+    // Übungsfilter aktualisieren
+    function updateExerciseFilterOptions() {
+      const uniqueExercises = [...new Set(entries.map(e => e.exercise))];
+      filterSelect.innerHTML = '<option value="alle">Alle Übungen anzeigen</option>';
+      
+      uniqueExercises.forEach(ex => {
+        const option = document.createElement('option');
+        option.value = ex;
+        option.textContent = ex;
+        filterSelect.appendChild(option);
+      });
+    }
+    
+    // Statistiken aktualisieren
+    function updateStats() {
+      const statsContainer = document.getElementById('exerciseStats');
+      const placeholder = document.getElementById('statsPlaceholder');
+      
+      if (entries.length === 0) {
+        statsContainer.style.display = 'none';
+        placeholder.style.display = 'block';
+        return;
+      }
+      
+      statsContainer.style.display = 'block';
+      placeholder.style.display = 'none';
+      
+      // Gesamtstatistiken
+      const totalReps = entries.reduce((sum, e) => sum + e.reps, 0);
+      const uniqueExercises = [...new Set(entries.map(e => e.exercise))];
+      const avgReps = (totalReps / entries.length).toFixed(1);
+      
+      // Häufigste Übung finden
+      const exerciseCount = {};
+      entries.forEach(entry => {
+        exerciseCount[entry.exercise] = (exerciseCount[entry.exercise] || 0) + 1;
+      });
+      
+      const mostCommon = Object.entries(exerciseCount).sort((a, b) => b[1] - a[1])[0];
+      
+      document.getElementById('totalReps').textContent = totalReps;
+      document.getElementById('totalExercises').textContent = uniqueExercises.length;
+      document.getElementById('avgReps').textContent = avgReps;
+      document.getElementById('totalSessions').textContent = entries.length;
+      document.getElementById('commonExerciseName').textContent = mostCommon[0];
+      document.getElementById('commonExerciseCount').textContent = mostCommon[1];
+    }
+    
+    // Diagramm aktualisieren
+    function updateChart() {
+      if (chart) chart.destroy();
+      
+      const filter = filterSelect.value;
+      
+      if (filter === "alle" || entries.filter(e => e.exercise === filter).length === 0) {
+        document.getElementById('chartContainer').style.display = 'none';
+        noDataMessage.style.display = 'block';
+        return;
+      }
+      
+      document.getElementById('chartContainer').style.display = 'block';
+      noDataMessage.style.display = 'none';
+      
+      const filtered = entries.filter(e => e.exercise === filter);
+      const sortedByDate = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
+      
+      const dates = sortedByDate.map(e => e.date);
+      let data, label, color;
+      
+      switch(currentChartType) {
+        case 'reps':
+          data = sortedByDate.map(e => e.reps);
+          label = 'Wiederholungen';
+          color = 'rgba(52, 152, 219, 1)';
+          break;
+        case 'frequency':
+          // Trainingshäufigkeit pro Tag/Woche berechnen
+          const dateCount = {};
+          sortedByDate.forEach(entry => {
+            const date = entry.date.split(',')[0]; // Nur das Datum ohne Uhrzeit
+            dateCount[date] = (dateCount[date] || 0) + 1;
+          });
+          
+          dates = Object.keys(dateCount);
+          data = Object.values(dateCount);
+          label = 'Anzahl der Übungen';
+          color = 'rgba(46, 204, 113, 1)';
+          break;
+      }
+      
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: `${label} für: ${filter}`,
+            data: data,
+            borderColor: color,
+            backgroundColor: color.replace('1)', '0.2)'),
+            tension: 0.3,
+            fill: true,
+            pointRadius: 6,
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { 
+                display: true, 
+                text: label,
+                font: {
+                  weight: 'bold'
+                }
+              }
+            },
+            x: {
+              title: { 
+                display: true, 
+                text: 'Datum',
+                font: {
+                  weight: 'bold'
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Benachrichtigung anzeigen
+    function showNotification(message, type = 'success') {
+      notification.textContent = message;
+      notification.style.display = 'block';
+      
+      switch(type) {
+        case 'success':
+          notification.style.backgroundColor = '#2ecc71';
+          break;
+        case 'warning':
+          notification.style.backgroundColor = '#f39c12';
+          break;
+        case 'error':
+          notification.style.backgroundColor = '#e74c3c';
+          break;
+      }
+      
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Daten exportieren
+    function exportData() {
+      if (entries.length === 0) {
+        showNotification('Keine Daten zum Exportieren vorhanden', 'warning');
+        return;
+      }
+      
+      const dataStr = JSON.stringify(entries, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'krafttraining-daten.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showNotification('Daten erfolgreich exportiert!', 'success');
+    }
+    
+    // Event Handler
+    function handleFilterChange() {
+      currentExercise = filterSelect.value;
+      renderTable();
+      updateChart();
+    }
+    
+    function handleSortChange() {
+      renderTable();
+    }
+    
+    function handleSearch() {
+      renderTable();
+    }
+  </script>
+</body>
+</html>
